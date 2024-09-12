@@ -346,22 +346,25 @@ class CornersProblem(search.SearchProblem):
 
 def cornersHeuristic(state: Any, problem: CornersProblem):
     """
-    A heuristic for the CornersProblem that you defined.
-
-      state:   The current search state
-               (a data structure you chose in your search problem)
-
-      problem: The CornersProblem instance for this layout.
-
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
+    A heuristic for the CornersProblem that estimates the shortest path through
+    all unvisited corners.
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    corners = problem.corners  # These are the corner coordinates
+    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # Assume the state is just the current position
+    current_position = state
+
+    # Calculate distances to all corners
+    distances = []
+    for corner in corners:
+        # Use Manhattan distance
+        distance = abs(current_position[0] - corner[0]) + abs(current_position[1] - corner[1])
+        distances.append(distance)
+
+    # Return the sum of the two largest distances
+    # This is admissible because the actual path will always be at least this long
+    return sum(sorted(distances)[-2:]) if len(distances) > 1 else sum(distances)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -427,35 +430,26 @@ class AStarFoodSearchAgent(SearchAgent):
 
 def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
-    Your heuristic for the FoodSearchProblem goes here.
-
-    This heuristic must be consistent to ensure correctness.  First, try to come
-    up with an admissible heuristic; almost all admissible heuristics will be
-    consistent as well.
-
-    If using A* ever finds a solution that is worse uniform cost search finds,
-    your heuristic is *not* consistent, and probably not admissible!  On the
-    other hand, inadmissible or inconsistent heuristics may find optimal
-    solutions, so be careful.
-
-    The state is a tuple ( pacmanPosition, foodGrid ) where foodGrid is a Grid
-    (see game.py) of either True or False. You can call foodGrid.asList() to get
-    a list of food coordinates instead.
-
-    If you want access to info like walls, capsules, etc., you can query the
-    problem.  For example, problem.walls gives you a Grid of where the walls
-    are.
-
-    If you want to *store* information to be reused in other calls to the
-    heuristic, there is a dictionary called problem.heuristicInfo that you can
-    use. For example, if you only want to count the walls once and store that
-    value, try: problem.heuristicInfo['wallCount'] = problem.walls.count()
-    Subsequent calls to this heuristic can access
-    problem.heuristicInfo['wallCount']
+    A heuristic for the FoodSearchProblem that estimates the minimum cost to
+    collect all of the food dots.
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+
+    if not foodList:
+        return 0
+
+    # Calculate the distance to the farthest food dot using Manhattan distance
+    maxDistance = max(abs(position[0] - food[0]) + abs(position[1] - food[1])
+                      for food in foodList)
+
+    # Use the number of remaining food dots as an additional component
+    remainingFood = len(foodList)
+
+    # Combine the two components
+    # This is admissible because the actual path will be at least as long as
+    # the distance to the farthest food, and we need at least one step per remaining food
+    return max(maxDistance, remainingFood)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
