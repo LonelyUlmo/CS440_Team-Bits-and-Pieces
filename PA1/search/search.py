@@ -87,35 +87,7 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    #Stack DFS implementation
-    dfsStack = util.Stack()
-
-    #Array to keep track of visited nodes
-    dfsVisited = []
-
-    #List of actions
-    actions = []
-
-    #Push starting node
-    dfsStack.push((problem.getStartState(), '' , 0))
-
-    while(dfsStack.isEmpty() != True):
-        #Pop last node from stack
-        current = dfsStack.pop()
-        
-        if current[0] not in dfsVisited: 
-            #add node to visited list
-            dfsVisited.append(current[0])
-            #Check if we have achieved goal
-            if problem.isGoalState(current[0]):
-                return actions;
-            #Explore child nodes
-            else:
-                for node in problem.getSuccessors(current[0]):
-                     dfsStack.push((node[0], node[1], node[2]))
-
-    print(actions)
-    return actions
+    util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
