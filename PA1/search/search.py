@@ -17,6 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from numpy import append
 import util
 
 class SearchProblem:
@@ -72,6 +73,8 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
+
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
@@ -94,33 +97,64 @@ def depthFirstSearch(problem: SearchProblem):
     dfsVisited = []
 
     #List of actions
-    actions = []
+    actionsTaken = []
 
     #Push starting node
-    dfsStack.push((problem.getStartState(), '' , 0))
+    dfsStack.push((problem.getStartState(), [] , 0))
 
     while(dfsStack.isEmpty() != True):
         #Pop last node from stack
         current = dfsStack.pop()
-        
+        actionsTaken =  current[1]
+
         if current[0] not in dfsVisited: 
             #add node to visited list
             dfsVisited.append(current[0])
+            
             #Check if we have achieved goal
             if problem.isGoalState(current[0]):
-                return actions;
+                return actionsTaken;
             #Explore child nodes
             else:
                 for node in problem.getSuccessors(current[0]):
-                     dfsStack.push((node[0], node[1], node[2]))
-
-    print(actions)
-    return actions
+                     newActionTaken = actionsTaken + [node[1]]
+                     dfsStack.push((node[0], newActionTaken, node[2]))
+                     
+    return actionsTaken
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+        
+    #Queue BFS implementation
+    dfsQueue = util.Queue()
+
+    #Array to keep track of visited nodes
+    bfsVisited = []
+
+    #List of actions
+    actionsTaken = []
+
+    #Push starting node
+    dfsQueue.push((problem.getStartState(), [] , 0))
+
+    while(dfsQueue.isEmpty() != True):
+        #Pop last node from Queue
+        current = dfsQueue.pop()
+        actionsTaken =  current[1]
+
+        if current[0] not in bfsVisited: 
+            #add node to visited list
+            bfsVisited.append(current[0])
+            
+            #Check if we have achieved goal
+            if problem.isGoalState(current[0]):
+                return actionsTaken;
+            #Explore child nodes
+            else:
+                for node in problem.getSuccessors(current[0]):
+                     newActionTaken = actionsTaken + [node[1]]
+                     dfsQueue.push((node[0], newActionTaken, node[2]))
+                     
+    return actionsTaken
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
