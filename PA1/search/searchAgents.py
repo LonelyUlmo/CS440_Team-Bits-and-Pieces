@@ -479,8 +479,34 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #Queue BFS implementation
+        bfsQueue = util.Queue()
+        # Array to keep track of visited nodes
+        bfsVisited = []
+        # List of actions
+        actionsTaken = []
+        # Initialize current as the starting position with no actions taken
+        bfsQueue.push((startPosition, actionsTaken, 0))
+
+        while(bfsQueue.isEmpty() != True):
+            #Pop last node from Queue
+            current = bfsQueue.pop()
+            actionsTaken =  current[1]
+
+            if current[0] not in bfsVisited: # This stops us from double checking a square that we visted from a different path
+                #add node to visited list
+                bfsVisited.append(current[0])
+
+                #Check if we have achieved goal
+                if problem.isGoalState(current[0]): # Alter this to check if it's a food pellet
+                    return actionsTaken
+                #Explore child nodes
+                else:
+                    for node in problem.getSuccessors(current[0]):
+                        newActionTaken = actionsTaken + [node[1]]
+                        bfsQueue.push((node[0], newActionTaken, node[2]))
+
+
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -515,8 +541,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x,y = state
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Returns if position contains food
+        return self.food[x][y]
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """
