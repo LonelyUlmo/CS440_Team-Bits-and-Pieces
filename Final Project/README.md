@@ -3,8 +3,8 @@
 ## Team: Bits and Pieces
 
 ## Members:
-Jeremy Slader
-Jose Flores
+Jeremy Slader, 
+Jose Flores, 
 Jonathan Evans
 
 ## Directories: 
